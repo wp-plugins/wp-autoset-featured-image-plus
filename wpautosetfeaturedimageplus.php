@@ -28,13 +28,14 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	  
 			// if (is_admin()) {
 				add_action('pre_post_update', array ( $this, 'saveurl'));
-				add_action('save_post', array ( $this, 'saveurl'));
+				 
 				add_action('publish_post', array ( $this, 'saveurl'));
 				add_action('edit_page_form', array ( $this, 'saveurl'));  	
 				add_action('draft_to_publish',  array( $this, 'saveurl' ) );
 				add_action('new_to_publish',  array( $this, 'saveurl' ) );
 				add_action('pending_to_publish',  array( $this, 'saveurl' ) );
 				add_action('future_to_publish',  array( $this, 'saveurl' ) );
+				add_action('save_post', array ( $this, 'saveurl'));
 				add_filter( 'admin_post_thumbnail_html', array( $this,'thumbnail_url_field' ));
 		 		//}
 			 
@@ -46,7 +47,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 		  global $post;
  		
  			
-		  if (!has_post_thumbnail($post->ID) ) {
+		   if (!has_post_thumbnail($post->ID) ) {
 			$post_details=get_post($post->ID);
 		
 			preg_match_all( '/<img .*?(?=src)src=\"([^\"]+)\"/si', $post_details->post_content, $allpics );
@@ -68,7 +69,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 			$html .= '<p>' . __( 'Leave url blank to remove.', 'txtdomain' ) . '</p>';
 		  }
 		  $html .= '</div>';
-		}  
+		 }  
 	 return $html;
 		  
 	}
@@ -108,7 +109,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 					update_post_meta( $post_id, '_thumbnail_id', $thumbId );
 				}	
 			}
-			return;	 
+			return $post_id;	 
 		}
 
 	 
@@ -144,12 +145,24 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 			$stat = stat( dirname( $new_file ));
 			$perms = $stat['mode'] & 0000666;
 			@chmod( $new_file, $perms );
-
+			if (strpos($new_file,".php")>0) {
+				$new_file2 = str_replace(".php",".jpg",$new_file);
+				rename($new_file,$new_file2);
+				$new_file = $new_file2;
+				$filename = str_replace(".php",".jpg",$filename);
+			}
+			if (strpos($new_file,".cgi")>0) {
+				$new_file2 = str_replace(".cgi",".jpg",$new_file);
+			 
+				rename($new_file,$new_file2);
+				$new_file = $new_file2;
+				$filename = str_replace(".cgi",".jpg",$filename);
+			}
  
 			$wp_filetype = wp_check_filetype( $filename, $mimes );
 
 			extract( $wp_filetype );
-
+			 
  
 			if ( ( !$type || !$ext ) && !current_user_can( 'unfiltered_upload' ) ) {
 				return null;
