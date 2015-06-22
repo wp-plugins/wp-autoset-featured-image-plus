@@ -80,17 +80,22 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
 		public function saveurl( $post_id ) {
 			
+			if (is_object($post_id)) {
+				$post_id = $post_id->ID;
+			 
+			}
 			 
 			if ( ! isset( $_POST['thumbnail_ext_url_nonce'] ) ) {
 				return $post_id;
 			}
 			$nonce = $_POST['thumbnail_ext_url_nonce'];
 		 
-	  
+	  	 
+	  	
 			if ( ! wp_verify_nonce( $nonce, 'thumbnail_ext_url_' . $post_id . get_current_blog_id()  ) ) {
 				return $post_id;
 			}
-		
+		 
 			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 				return $post_id;
 			}

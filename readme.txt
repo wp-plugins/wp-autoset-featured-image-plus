@@ -48,10 +48,15 @@ Features include:
 
 * Initial Release. Basic features only.
 
+ 
+
 == Upgrade Notice == 
 
-= 0.1 =
+= 1.0 =
 Initial Release. Basic features only.
+= 1.1 =
+
+* Bug fixed on new_to_publish post id passed.
 
 == Frequently Asked Questions ==
 
