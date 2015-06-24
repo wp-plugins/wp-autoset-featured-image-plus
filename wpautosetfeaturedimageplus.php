@@ -3,7 +3,7 @@
 Plugin Name: WP Autoset Featured Image Plus
 Plugin URI: http://www.luciaintelisano.it/wp-autoset-featured-image-plus
 Description: A plugin to set external/remote images from text editor as post thumbnail/featured image.
-Version: 1.0
+Version: 2.0
 Author: Lucia Intelisano
 Author URI: http://www.luciaintelisano.it
 License: GPLv2 or later
