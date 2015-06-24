@@ -281,7 +281,7 @@ function wpasfip_plugin_setup_menu(){
 function wpasfip_settings_page() {
 ?>
 <div class="wrap">
-<h2>WP Auto Hotel Finder</h2>
+<h2>WP Auto Set Featured Image Plus</h2>
 
 <form method="post" action="options.php">
     <?php 

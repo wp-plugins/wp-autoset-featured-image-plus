@@ -4,7 +4,7 @@ Contributors: Lucia Intelisano
 Donate link: http://www.luciaintelisano.it/
 Tags: external, url, featured image, featured, featured images, image
 Requires at least: 3.1
-Tested up to: 4.1
+Tested up to: 4.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ Initial Release. Basic features only.
 = 1.1 =
 
 * Bug fixed on new_to_publish post id passed.
+= 2.0 =
+
+* Add featured image from post url also on listing. 
 
 == Frequently Asked Questions ==
 
