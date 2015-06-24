@@ -48,7 +48,9 @@ Features include:
 
 * Initial Release. Basic features only.
 
- 
+= 2.0 =
+
+* Add featured image from post url also on listing. 
 
 == Upgrade Notice == 
 

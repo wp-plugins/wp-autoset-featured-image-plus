@@ -13,37 +13,83 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 <?php
 
  
-	function init_wpasfi() {
-		new wpasfi();
-	}
  
-	add_action( 'load-post.php', 'init_wpasfi' );
-	add_action( 'load-post-new.php', 'init_wpasfi' );
+		 
+	 
+ 
+ wpasfip_init();
    
 
-	class wpasfi {
+	 
 
     
-    	public function __construct() {
+    	function wpasfip_init() {
 	  
 			// if (is_admin()) {
-				add_action('pre_post_update', array ( $this, 'saveurl'));
+				add_filter( 'post_thumbnail_html', 'wpasfip_post_thumbnail_html', 20, 5 );
+				add_action('admin_menu', 'wpasfip_plugin_setup_menu');
+	 			add_action( 'admin_init',  'wpasfip_register_mysettings' ); 
+				add_action('pre_post_update',  'wpasfip_saveurl');
 				 
-				add_action('publish_post', array ( $this, 'saveurl'));
-				add_action('edit_page_form', array ( $this, 'saveurl'));  	
-				add_action('draft_to_publish',  array( $this, 'saveurl' ) );
-				add_action('new_to_publish',  array( $this, 'saveurl' ) );
-				add_action('pending_to_publish',  array( $this, 'saveurl' ) );
-				add_action('future_to_publish',  array( $this, 'saveurl' ) );
-				add_action('save_post', array ( $this, 'saveurl'));
-				add_filter( 'admin_post_thumbnail_html', array( $this,'thumbnail_url_field' ));
+				add_action('publish_post',  'wpasfip_saveurl');
+				add_action('edit_page_form',   'wpasfip_saveurl');  	
+				add_action('draft_to_publish',   'wpasfip_saveurl'  );
+				add_action('new_to_publish',   'wpasfip_saveurl' );
+				add_action('pending_to_publish',    'wpasfip_saveurl');
+				add_action('future_to_publish',    'wpasfip_saveurl');
+				add_action('save_post',   'wpasfip_saveurl');
+				add_filter( 'admin_post_thumbnail_html',  'wpasfip_thumbnail_url_field');
+			 
 		 		//}
 			 
 		}
  
+ 
+
+function wpasfip_post_thumbnail_html( $html, $post_id, $post_thumbnail_id, $size, $attr  ) {
+  global $post;
+ 
+	$wpasfip_thumb=get_option('wpasfip_default_first_url');
+	$cats = get_option('wpasfip_view_on_cat');
 	 
+	if ($wpasfip_thumb==true && $cats!="") {
+ 
+		$attachok = 0;
+		 
+    	$catPost = get_the_category($post->ID);
+		$arrCat = split(",",$cats);
+		 
+		 if($catPost){
+			foreach($catPost as $category) {
+		 
+					foreach($arrCat as $cat) {
+						if (strtolower($category->name)==$cat) {
+							$attachok=1;
+					 	}
+					}
+			}
+		}	
+		if ($attachok==1) {
+		 
+		 
+			preg_match_all( '/<img .*?(?=src)src=\"([^\"]+)\"/si', strtolower($post->post_content), $allpics );
+			 
+			if (is_array($allpics[1]) && count($allpics[1])>0) {
+				 
+				$pic = $allpics[1][0];
+				 
+				$exturl =  $pic;
+				$html = '<img src="' . $exturl . '" alt="" />';
+		 
+			}
+			
+		}
+		 
+	}
+	return $html;
+}	 
 	 
-	 	function thumbnail_url_field( $html ) {
+	 	function wpasfip_thumbnail_url_field( $html ) {
 		  global $post;
  		
  			
@@ -78,7 +124,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
  
-		public function saveurl( $post_id ) {
+		 function wpasfip_saveurl( $post_id ) {
 			
 			if (is_object($post_id)) {
 				$post_id = $post_id->ID;
@@ -108,7 +154,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 			$extImgUrl = sanitize_text_field( $_POST['thumbnail_ext_url'] );
 		 
 	 		if ($extImgUrl!="") {
-				$thumbId = $this->wpasfiCreateThumb($extImgUrl, $post_id); 
+				$thumbId = wpasfiCreateThumb($extImgUrl, $post_id); 
 	  
 				if ($thumbId) {
 					update_post_meta( $post_id, '_thumbnail_id', $thumbId );
@@ -218,6 +264,48 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 				return FALSE;
 			}
  
-		 
+ 
+ 
+ function wpasfip_register_mysettings() {
+	register_setting( 'wpasfip-settings-group', 'wpasfip_default_first_url' );
+ 	register_setting( 'wpasfip-settings-group', 'wpasfip_view_on_cat' );
+}
+
+
+function wpasfip_plugin_setup_menu(){
+       add_options_page('WP Auto Set Featured Image Plus', 'WP Auto Set Featured Image Plus', 'administrator', __FILE__, 'wpasfip_settings_page',plugins_url('/images/icon.png', __FILE__));
+	}
+	/**
+ * Function for view settings page 
+ */
+function wpasfip_settings_page() {
+?>
+<div class="wrap">
+<h2>WP Auto Hotel Finder</h2>
+
+<form method="post" action="options.php">
+    <?php 
+    	settings_fields( 'wpasfip-settings-group' );  
+    	do_settings_sections( 'wpasfip-settings-group' ); 
+    ?>
+    <table class="form-table">
+        <tr valign="top">
+        <th scope="row">Set first url image on post (if exists) as featured image</th>
+        <td><input type="checkbox" name="wpasfip_default_first_url" <?php checked( '1', get_option('wpasfip_default_first_url')) ; ?> value="1" /></td>
+        </tr>
+         <tr valign="top">
+        <th scope="row">View on post of categories</th>
+        <td><input type="text" name="wpasfip_view_on_cat" value="<?php echo esc_attr( get_option('wpasfip_view_on_cat') ); ?>" /> (es. cat1,cat2,...)</td>
+        </tr>
+       
+    </table>
+    
+    <?php submit_button(); ?>
+
+</form>
+</div>
+<?php 
 	
 }
+
+?>
