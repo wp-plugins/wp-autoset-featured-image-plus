@@ -47,12 +47,16 @@ Features include:
 == Changelog ==
 
 = 1.0 =
+Initial Release. Basic features only.
+= 1.1 =
 
-* Initial Release. Basic features only.
-
+* Bug fixed on new_to_publish post id passed.
 = 2.0 =
 
 * Add featured image from post url also on listing. 
+= 2.1 =
+
+* bug fixed on saving image.
 
 == Upgrade Notice == 
 
