@@ -4,9 +4,10 @@ Contributors: Lucia Intelisano
 Donate link: http://www.luciaintelisano.it/
 Tags: external, url, featured image, featured, featured images, image
 Requires at least: 3.1
-Tested up to: 4.2.2
-Stable tag: 2.0
+Tested up to: 4.2.3
+Stable tag: 2.1
 License: GPLv2 or later
+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Check for an image inside text editor or use external images from anywhere as the featured image of your pages and
@@ -63,6 +64,9 @@ Initial Release. Basic features only.
 = 2.0 =
 
 * Add featured image from post url also on listing. 
+= 2.1 =
+
+* bug fixed on saving image. 
 
 == Frequently Asked Questions ==
 

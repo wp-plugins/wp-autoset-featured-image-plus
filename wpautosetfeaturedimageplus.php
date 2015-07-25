@@ -3,7 +3,7 @@
 Plugin Name: WP Autoset Featured Image Plus
 Plugin URI: http://www.luciaintelisano.it/wp-autoset-featured-image-plus
 Description: A plugin to set external/remote images from text editor as post thumbnail/featured image.
-Version: 2.0
+Version: 2.1
 Author: Lucia Intelisano
 Author URI: http://www.luciaintelisano.it
 License: GPLv2 or later
@@ -173,8 +173,17 @@ function wpasfip_post_thumbnail_html( $html, $post_id, $post_thumbnail_id, $size
 			if (!(($uploads = wp_upload_dir(current_time('mysql')) ) && false === $uploads['error'])) {
 				return null;
 			}
-
+			 
+			global $wpdb;
+			$resultsImg = $wpdb->get_results( "SELECT ID FROM $wpdb->posts  WHERE guid LIKE '%".mysql_escape_string($filename)."%'  AND post_type = 'attachment'",ARRAY_A );
+		 	
+		  
+		 	if (count($resultsImg)>0) {
+		 		return null;
+		 	}
  
+ 		 
+ 		 
 			$filename = wp_unique_filename( $uploads['path'], $filename );
 
 	 
@@ -232,12 +241,14 @@ function wpasfip_post_thumbnail_html( $html, $post_id, $post_thumbnail_id, $size
 			);
 
 			$thumb_id = wp_insert_attachment($attachment, $file, $post_id);
+		 
+		 
 			if ( !is_wp_error($thumb_id) ) {
 				require_once(ABSPATH . '/wp-admin/includes/image.php');
-
+			$arrIm = wp_generate_attachment_metadata( $thumb_id, $new_file );
 		 
-				wp_update_attachment_metadata( $thumb_id, wp_generate_attachment_metadata( $thumb_id, $new_file ) );
-				update_attached_file( $thumb_id, $new_file );
+			 	wp_update_attachment_metadata( $thumb_id, $arrIm);
+			 	update_attached_file( $thumb_id, $new_file );
 
 				return $thumb_id;
 			}
